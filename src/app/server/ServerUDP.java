@@ -1,5 +1,6 @@
 package app.server;
 
+import app.core.config.AppConfig;
 import app.core.utils.console;
 
 import java.net.DatagramPacket;
@@ -8,27 +9,21 @@ import java.net.InetAddress;
 
 public class ServerUDP {
     public static void main(String[] args) throws Exception {
+        console.log("Server Starting");
+        DatagramSocket socket = new DatagramSocket(AppConfig.Port);
+        byte[] receiveBytes = new byte[1024];
+        DatagramPacket datagramToReceive = new DatagramPacket(receiveBytes, receiveBytes.length);
 
-        console.log("Server running...");
-        DatagramSocket socket = new DatagramSocket(9999);
+        socket.receive(datagramToReceive);
+        String str = new String(datagramToReceive.getData());
+        console.log("Received number" + str);
 
-        byte[] b1 = new byte[1024];
+        double result = Math.pow(Integer.parseInt(str.trim()), 2);
 
-        DatagramPacket dp = new DatagramPacket(b1, b1.length);
-        console.log("Server receive...");
-        socket.receive(dp);
-        String str = new String(dp.getData());
-        console.log("Received " + str);
-        int num = Integer.parseInt(str.trim());
-        int result = num * num;
-
-        byte[] b2 = String.valueOf(result).getBytes();
+        byte[] sendBytes = String.valueOf(result).getBytes();
         InetAddress ia = InetAddress.getLocalHost();
-        DatagramPacket dp1 = new DatagramPacket(b2, b2.length, ia, dp.getPort());
-        console.log("Server send " + result);
-        socket.send(dp1);
-        console.log("Send successfully");
-
-
+        DatagramPacket datagramToSend = new DatagramPacket(sendBytes, sendBytes.length, ia, datagramToReceive.getPort());
+        socket.send(datagramToSend);
+        console.log("Server send successfully value " + result);
     }
 }
