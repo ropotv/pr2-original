@@ -9,10 +9,11 @@ import java.net.InetAddress;
 
 public class ServerUDP {
     public static void main(String[] args) throws Exception {
-        console.log("Server Starting");
+        console.log("Server Started");
         DatagramSocket socket = new DatagramSocket(AppConfig.Port);
         byte[] receiveBytes = new byte[1024];
         DatagramPacket datagramToReceive = new DatagramPacket(receiveBytes, receiveBytes.length);
+        console.log("Waiting data to receive...");
 
         socket.receive(datagramToReceive);
         String str = new String(datagramToReceive.getData());
